@@ -38,7 +38,7 @@ Siga os passos abaixo para executar os testes na sua aplicação:
     Primeiro, é necessário acessar o container onde a aplicação está sendo executada. Utilize o seguinte comando:
 
     ```sh
-    docker exec -it code-api-1 /bin/bash
+    docker exec -it user_info-api-1 /bin/bash
     ```
 
     Uma vez dentro do container, você pode executar os testes com um dos seguintes comandos, de acordo com o tipo de teste desejado:
