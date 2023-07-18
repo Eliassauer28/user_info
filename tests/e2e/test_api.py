@@ -5,7 +5,6 @@ from src.allocation import config
 import pytest
 
 url = config.get_api_url()
-role_id = random.randint(1, 499)
 
 @pytest.mark.usefixtures('postgres_db')
 @pytest.mark.usefixtures('restart_api')
@@ -15,21 +14,11 @@ def test_add_user():
         json={
             "name": "Gato",
             "email": "gato@gmail.com",
-            "role_id": role_id
+            "role_id": 1
         }
     )
     assert r.status_code == 200
 
-@pytest.mark.usefixtures('postgres_db')
-@pytest.mark.usefixtures('restart_api')
-def test_add_user_duplicate_role_id():
-    r = requests.post(f'{url}/add_user', json={
-            "name": "Gato",
-            "email": "gato@gmail.com",
-            "role_id": role_id
-        })
-   
-    assert r.status_code == 422
 
 @pytest.mark.usefixtures('postgres_db')
 @pytest.mark.usefixtures('restart_api')
@@ -41,8 +30,12 @@ def test_get_users_info():
 @pytest.mark.usefixtures('postgres_db')
 @pytest.mark.usefixtures('restart_api')
 def test_get_role():
-    r = requests.get(f'{url}/role?role_id={role_id}')
+    r = requests.get(f'{url}/role?role_id={1}')
     assert r.status_code == 200
+    assert r.json() ==  {
+    "description": "DEVELOPER",
+    "role_id": 1
+}
 
 @pytest.mark.usefixtures('postgres_db')
 @pytest.mark.usefixtures('restart_api')

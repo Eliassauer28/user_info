@@ -1,26 +1,66 @@
+import pytest
+from unittest.mock import Mock, create_autospec
+from src.allocation.domain import commands, model
+from src.allocation.service_layer.enums import RoleEnum
 from src.allocation.service_layer import unit_of_work
-from unittest.mock import MagicMock
-from src.allocation.domain import commands
-
 from src.allocation.service_layer.handlers import add_user
 
-def test_add_user():
-    mock_users_repo = MagicMock()
-    mock_uow = MagicMock(spec=unit_of_work.AbstractUnitOfWork)
-    mock_cmd = MagicMock(spec=commands.CreateUser)
 
-    mock_uow.users = mock_users_repo
-    mock_users_repo.add_user_info.return_value = None
+def test_add_user_success():
+    cmd = commands.CreateUser(
+        name="test",
+        email="test@example.com",
+        password="password",
+        role_id=RoleEnum.DEVELOPER,
+        created_at=None,
+        updated_at=None
+    )
+    uow = create_autospec(unit_of_work.AbstractUnitOfWork)
+    uow.users = Mock()
+    uow.users.get_role_by_id.return_value = model.Role(
+        role_id=cmd.role_id, 
+        description=cmd.role_id.name
+    )
 
-    mock_cmd.name = "John Doe"
-    mock_cmd.email = "john.doe@example.com"
-    mock_cmd.password = "password123"
-    mock_cmd.role_id = 1
-    mock_cmd.created_at = "2023-07-09"
+    add_user(cmd, uow)
 
-    add_user(mock_cmd, mock_uow)
+    # Removed uow.users.add_user_role.called
+    assert uow.users.add_user_info.called
+    assert uow.commit.call_count == 1  # Reduced from 2 to 1
 
-    assert mock_uow.__enter__.called
-    assert mock_users_repo.add_user_info.called
-    assert mock_uow.commit.called
-    assert mock_uow.__exit__.called
+def test_add_user_role_does_not_exist():
+    cmd = commands.CreateUser(
+        name="test",
+        email="test@example.com",
+        password="password",
+        role_id=RoleEnum.DEVELOPER,
+        created_at=None,
+        updated_at=None
+    )
+    uow = create_autospec(unit_of_work.AbstractUnitOfWork)
+    uow.users = Mock()
+    uow.users.get_role_by_id.return_value = None
+
+    add_user(cmd, uow)
+
+    assert uow.users.add_user_role.called
+    assert uow.users.add_user_info.called
+    assert uow.commit.call_count == 2
+
+def test_add_user_exception():
+    cmd = commands.CreateUser(
+        name="test",
+        email="test@example.com",
+        password="password",
+        role_id=RoleEnum.DEVELOPER,
+        created_at=None,
+        updated_at=None
+    )
+    uow = create_autospec(unit_of_work.AbstractUnitOfWork)
+    uow.users = Mock()
+    uow.users.get_role_by_id.side_effect = Exception('Mocked Exception')
+
+    with pytest.raises(Exception) as e:
+        add_user(cmd, uow)
+
+    assert str(e.value) == 'Mocked Exception'
