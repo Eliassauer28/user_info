@@ -1,0 +1,14 @@
+# app
+sqlalchemy<2
+flask
+psycopg2-binary
+pydantic
+
+
+# dev/tests
+pytest
+pytest-icdiff
+mypy
+pylint
+requests
+tenacity
