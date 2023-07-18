@@ -10,7 +10,7 @@ services:
       - DB_PASSWORD=abc123
       - API_HOST=api
       - PYTHONDONTWRITEBYTECODE=1
-      - FLASK_APP=allocation/entrypoints/flask_app.py
+      - FLASK_APP=src/allocation/entrypoints/flask_app.py
       - FLASK_DEBUG=1
       - PYTHONUNBUFFERED=1
     volumes:

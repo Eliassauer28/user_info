@@ -17,4 +17,4 @@ RUN pip install -e .
 ENV PYTHONPATH=/app:$PYTHONPATH
 
 # Change the working directory to /app/src
-WORKDIR /app/src
+WORKDIR /app

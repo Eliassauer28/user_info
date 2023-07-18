@@ -1,34 +1,59 @@
-## Requisitos para Implementação Local do Projeto
+## Requisitos para subir o projeto Localmente
 * Docker com docker-compose
 
 ## Como Construir os Contêineres
 * No diretório raiz do projeto, onde está localizado o arquivo `docker_compose.yml`, execute o seguinte comando: `docker-compose up --build -d`
 
-## Como Executar os Testes
-Para executar os testes, use os seguintes comandos:
+## Informações Detalhadas sobre as Requisições para as Rotas do Aplicativo
 
-```sh
-pytest tests/unit
-pytest tests/e2e
-```
+* **Rota:** `http://localhost:5005/add_user`, **Método:** POST
+    * Essa rota é usada para adicionar um novo usuário. 
+    * A requisição para esta rota deve ser uma solicitação POST contendo um corpo em JSON. 
 
-## Informações Sobre as Solicitações para as Rotas da Aplicação
+    **Exemplo de Corpo de Requisição:**
+    ```json
+    {
+        "name": "Elias",
+        "email": "elias@gmail.com",
+        "role_id": 1, 2 ou 3 
+    }
+    ```
+    Aqui, `"name"` é o nome do usuário, `"email"` é o endereço de email do usuário e `"role_id"` representa o papel do usuário que pode ser 1, 2 ou 3.
 
-* Rota: http://localhost:5005/add_user, método: POST
-  - Solicitação:
-```json
-{
-    "name": "Elias",
-    "email": "elias@gmail.com",
-    "role_id": 4
-}
-```
+* **Rota:** `http://localhost:5005/users`, **Método:** GET
+    * Essa rota é utilizada para recuperar uma lista de todos os usuários.
+    * Essa solicitação é do tipo GET e não requer um corpo de requisição.
 
-* Rota: http://localhost:5005/users, método: GET
-  - Não requer corpo de requisição.
+* **Rota:** `http://localhost:5005/role?role_id=3`, **Método:** GET
+    * Essa rota é usada para recuperar informações sobre um papel específico com base no seu ID.
+    * Essa requisição é do tipo GET e requer o parâmetro de consulta `role_id`. 
+    * Por exemplo, para buscar informações sobre o papel com ID 3, o URL da requisição seria `http://localhost:5005/role?role_id=3`.
 
-* Rota: http://localhost:5005/role?role_id=4, método: GET
-  - Requer o parâmetro de consulta `role_id`.
+# Guia de Execução de Testes
+
+Siga os passos abaixo para executar os testes na sua aplicação:
+
+1. **Acesso ao Container da Aplicação**
+
+    Primeiro, é necessário acessar o container onde a aplicação está sendo executada. Utilize o seguinte comando:
+
+    ```sh
+    docker exec -it code-api-1 /bin/bash
+    ```
+
+    Uma vez dentro do container, você pode executar os testes com um dos seguintes comandos, de acordo com o tipo de teste desejado:
+
+    - Para testes unitários:
+
+    ```sh
+    pytest tests/unit
+    ```
+
+    - Para testes end-to-end (e2e):
+
+    ```sh
+    pytest tests/e2e
+    ```
 
 ## Como Executar Esta Aplicação em Produção
 
